@@ -22,9 +22,13 @@ public class EmployersController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<List<EmployeeDto>> getEmployees() {
+    public Response<?> getEmployees() {
         return employeesService.getEmployees();
     }
 
+    @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<?> getEmployeeById(@PathVariable int id) {
+        return employeesService.getEmployeeById(id);
+    }
 
 }
