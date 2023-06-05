@@ -8,7 +8,6 @@ import org.example.application.services.ConnectionService;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -18,23 +17,36 @@ public class EmployersRepository {
     private final ConnectionService connectionService;
     private final EmployeesMapper employeesMapper;
 
-    public List<Employee> getAllEmployers() throws ResultException {
+    public List<Employee> getAllEmployees() throws ResultException {
         String query = "SELECT * FROM employees";
 
-        List<Employee> employeesList = new ArrayList<>();
+        List<Employee> employeesList;
         try (Connection connection = connectionService.getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
 
             if (resultSet == null) throw new ResultException("База данных пуста.");
 
-            while (resultSet.next()) {
-                Employee employee = employeesMapper.mapToEmployee(resultSet);
-                employeesList.add(employee);
-            }
+            employeesList = employeesMapper.createEmployeeList(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return employeesList;
+    }
+
+    public Employee getEmployeeById(int id) throws ResultException {
+        String query = "SELECT * FROM employees WHERE id = ?";
+
+        try (Connection connection = connectionService.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet == null) throw new ResultException("Такого пользователя не существует.");
+
+            return employeesMapper.mapToEmployee(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

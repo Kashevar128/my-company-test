@@ -19,8 +19,13 @@ public class EmployeesController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> getEmployees() {
-        return employeesService.getEmployeesResponse();
+    public Response<?> getAllEmployees() {
+        return employeesService.getAllEmployeesResponse();
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<?> getEmployeeById(@PathVariable int id) {
+        return employeesService.getEmployeeById(id);
     }
 
 }

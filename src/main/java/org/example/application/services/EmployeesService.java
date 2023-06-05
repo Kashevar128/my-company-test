@@ -23,25 +23,43 @@ public class EmployeesService {
     private final EmployersRepository employeesRepository;
     private final EmployeesMapper employeesMapper;
 
-    public Response<?> getEmployeesResponse() {
-        List<EmployeeDto> employeeDtoList = new ArrayList<>();
+    public Response<?> getAllEmployeesResponse() {
         try {
-            for (Employee employee : employeesRepository.getAllEmployers()) {
+            List<EmployeeDto> employeeDtoList = new ArrayList<>();
+            for (Employee employee : employeesRepository.getAllEmployees()) {
                 PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
                 List<ProjectDto> projectDtoListById = projectService.getProjectDtoListById(employee.getId());
                 EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDtoById, projectDtoListById);
                 employeeDtoList.add(employeeDto);
             }
+            return Response.<List<EmployeeDto>>builder()
+                    .data(employeeDtoList)
+                    .success(true)
+                    .build();
         } catch (ResultException e) {
             return Response.<String>builder()
                     .data(e.getMessage())
                     .success(false)
                     .build();
         }
-        return Response.<List<EmployeeDto>>builder()
-                .data(employeeDtoList)
-                .success(true)
-                .build();
+    }
+
+    public Response<?> getEmployeeById(int id) {
+        try {
+            Employee employee = employeesRepository.getEmployeeById(id);
+            PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
+            List<ProjectDto> projectDtoListById = projectService.getProjectDtoListById(employee.getId());
+            EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDtoById, projectDtoListById);
+            return Response.<EmployeeDto>builder()
+                    .data(employeeDto)
+                    .success(true)
+                    .build();
+        } catch (ResultException e) {
+            return Response.<String>builder()
+                    .data(e.getMessage())
+                    .success(false)
+                    .build();
+        }
     }
 
     public Response<Integer> test() {
