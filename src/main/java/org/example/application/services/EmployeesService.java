@@ -108,7 +108,20 @@ public class EmployeesService {
                     .build();
         }
         return Response.<String>builder()
-                .data("Пользователь успешно обновлен.")
+                .data("Сотрудник успешно обновлен.")
+                .success(true)
+                .build();
+    }
+
+    public Response<?> deleteEmployeeResponse(int id) {
+        if (!employeesRepository.deleteEmployee(id)) {
+            return Response.<String>builder()
+                    .data("Ошибка при удалении сотрудника.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Сотрудник успешно удален.")
                 .success(true)
                 .build();
     }
