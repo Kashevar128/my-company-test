@@ -51,7 +51,9 @@ VALUES ('Андрей', 'Кожевников', 'koshev@mail.ru', 33, 2),
        ('Михаил', 'Горбач', 'gorbach@mail.ru', 35, 1),
        ('Людмила', 'Гуляева', 'gulaeva@mail.ru', 40, 3),
        ('Владимир', 'Мономах', 'monomah@mail.ru', 25, 5),
-       ('Екатерина', 'Каренина', 'carenina@mail.ru', 20, 4);
+       ('Екатерина', 'Каренина', 'carenina@mail.ru', 20, 4),
+       ('Александр', 'Лобов', 'lobov@mail.ru', 23, 1),
+       ('Кирилл', 'Корин', 'corin@mail.ru', 27, 2);
 
 INSERT INTO projects (project_name)
 VALUES ('ChatProject'),
@@ -65,4 +67,5 @@ VALUES (1, 1),
        (4, 3),
        (5, 2),
        (1, 3),
-       (2, 2);
+       (6, 2),
+       (7, 3);
