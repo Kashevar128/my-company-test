@@ -8,6 +8,8 @@ import org.example.application.services.ConnectionService;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,5 +35,25 @@ public class PositionsRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<Position> getAllPositions() throws ResultException {
+        String query = "SELECT * FROM positions";
+
+        List<Position> positionList = new ArrayList<>();
+        try (Connection connection = connectionService.getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            if (resultSet == null) throw new ResultException("База данных пуста.");
+
+            while (resultSet.next()) {
+                Position position = positionsMapper.mapToPosition(resultSet);
+                positionList.add(position);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return positionList;
     }
 }

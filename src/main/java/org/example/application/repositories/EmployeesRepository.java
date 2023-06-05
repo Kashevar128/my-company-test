@@ -172,4 +172,22 @@ public class EmployeesRepository {
             return false;
         }
     }
+
+    public List<Employee> getEmployeeListByPositionId(int id) {
+        String query = "SELECT * FROM employees e WHERE e.id_position = ?";
+
+        List<Employee> employeeList = new ArrayList<>();
+        try (Connection connection = connectionService.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Employee employee = employeesMapper.mapToEmployee(resultSet);
+                employeeList.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeeList;
+    }
 }

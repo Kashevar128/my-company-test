@@ -126,11 +126,23 @@ public class EmployeesService {
                 .build();
     }
 
+    public List<EmployeeDto> getEmployeeDtoListByPositionId(int id) {
+        List<Employee> employeeDtoListByPositionId = employeesRepository.getEmployeeListByPositionId(id);
+        List<EmployeeDto> employeeDtoList = new ArrayList<>();
+        for (Employee employee : employeeDtoListByPositionId) {
+            EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
+            employeeDtoList.add(employeeDto);
+        }
+        return employeeDtoList;
+    }
+
     public Response<Integer> test() {
         return Response.<Integer>builder()
                 .data(1001)
                 .success(true)
                 .build();
     }
+
+
 
 }
