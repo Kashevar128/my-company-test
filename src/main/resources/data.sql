@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS employees
     last_name   CHARACTER VARYING(30) NOT NULL,
     email       CHARACTER VARYING(30) NOT NULL,
     age         INTEGER               NOT NULL,
-    id_position INTEGER               NOT NULL,
+    id_position INTEGER,
     FOREIGN KEY (id_position)
         REFERENCES positions (id)
         ON UPDATE CASCADE

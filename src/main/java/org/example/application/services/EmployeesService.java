@@ -1,6 +1,7 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.application.api.EmployeeRequest;
 import org.example.application.dto.PositionDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.exeptions.ResultException;
@@ -8,7 +9,7 @@ import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.mappers.EmployeesMapper;
 import org.example.application.model.Employee;
-import org.example.application.repositories.EmployersRepository;
+import org.example.application.repositories.EmployeesRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class EmployeesService {
 
     private final PositionsService positionsService;
     private final ProjectService projectService;
-    private final EmployersRepository employeesRepository;
+    private final EmployeesRepository employeesRepository;
     private final EmployeesMapper employeesMapper;
 
     public Response<?> getAllEmployeesResponse() {
@@ -44,7 +45,7 @@ public class EmployeesService {
         }
     }
 
-    public Response<?> getEmployeeById(int id) {
+    public Response<?> getEmployeeByIdResponse(int id) {
         try {
             Employee employee = employeesRepository.getEmployeeById(id);
             PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
@@ -60,6 +61,35 @@ public class EmployeesService {
                     .success(false)
                     .build();
         }
+    }
+
+    public Response<?> createNewEmployeeResponse(EmployeeRequest employeeRequest) {
+        if (employeeRequest == null) {
+            return Response.<String>builder()
+                    .data("Нулевой запрос.")
+                    .success(false)
+                    .build();
+        }
+        String firstName = employeeRequest.getFirstName();
+        String lastName = employeeRequest.getLastName();
+        String email = employeeRequest.getEmail();
+        Integer age = employeeRequest.getAge();
+        if (firstName == null || lastName == null || email == null || age == null) {
+            return Response.<String>builder()
+                    .data("Заполнены не все поля.")
+                    .success(false)
+                    .build();
+        }
+        if (!employeesRepository.createEmployee(employeeRequest)) {
+            return Response.<String>builder()
+                    .data("Ошибка при создании сотрудника.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Пользователь успешно создан.")
+                .success(true)
+                .build();
     }
 
     public Response<Integer> test() {

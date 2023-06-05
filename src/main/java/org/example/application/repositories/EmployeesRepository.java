@@ -1,6 +1,7 @@
 package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
+import org.example.application.api.EmployeeRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.mappers.EmployeesMapper;
 import org.example.application.model.Employee;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class EmployersRepository {
+public class EmployeesRepository {
 
     private final ConnectionService connectionService;
     private final EmployeesMapper employeesMapper;
@@ -47,6 +48,21 @@ public class EmployersRepository {
             return employeesMapper.mapToEmployee(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public boolean createEmployee(EmployeeRequest employeeRequest) {
+        String query = "INSERT INTO employees (first_name, last_name, email, age) VALUES (?, ?, ?, ?)";
+        try (Connection connection = connectionService.getConnection()){
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, employeeRequest.getFirstName());
+            statement.setString(2, employeeRequest.getLastName());
+            statement.setString(3, employeeRequest.getEmail());
+            statement.setInt(4, employeeRequest.getAge());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
