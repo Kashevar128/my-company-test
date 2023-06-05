@@ -1,4 +1,4 @@
-package org.example.application.Exeptions;
+package org.example.application.exeptions;
 
 public class ResultException extends RuntimeException{
     public ResultException(String message) {

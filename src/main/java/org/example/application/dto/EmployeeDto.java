@@ -2,7 +2,6 @@ package org.example.application.dto;
 
 import lombok.Builder;
 import lombok.Data;
-
 import java.util.List;
 
 

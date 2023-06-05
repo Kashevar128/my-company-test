@@ -1,10 +1,12 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.Exeptions.ResultException;
+import org.example.application.dto.PositionDto;
+import org.example.application.dto.ProjectDto;
+import org.example.application.exeptions.ResultException;
 import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
-import org.example.application.mappers.EmployeesMapperDto;
+import org.example.application.mappers.EmployeesMapper;
 import org.example.application.model.Employee;
 import org.example.application.repositories.EmployersRepository;
 import org.springframework.stereotype.Service;
@@ -16,15 +18,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeesService {
 
+    private final PositionsService positionsService;
+    private final ProjectService projectService;
     private final EmployersRepository employeesRepository;
-    private final EmployeesMapperDto employeesMapperDto;
+    private final EmployeesMapper employeesMapper;
 
-
-    public Response<?> getEmployees() {
+    public Response<?> getEmployeesResponse() {
         List<EmployeeDto> employeeDtoList = new ArrayList<>();
         try {
             for (Employee employee : employeesRepository.getAllEmployers()) {
-                employeeDtoList.add(employeesMapperDto.mapToEmployeeDto(employee));
+                PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
+                List<ProjectDto> projectDtoListById = projectService.getProjectDtoListById(employee.getId());
+                EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDtoById, projectDtoListById);
+                employeeDtoList.add(employeeDto);
             }
         } catch (ResultException e) {
             return Response.<String>builder()
@@ -34,24 +40,6 @@ public class EmployeesService {
         }
         return Response.<List<EmployeeDto>>builder()
                 .data(employeeDtoList)
-                .success(true)
-                .build();
-    }
-
-    public Response<?> getEmployeeById(int id) {
-        Employee employeeById;
-        EmployeeDto employeeDto;
-        try {
-            employeeById = employeesRepository.getEmployeeById(id);
-            employeeDto = employeesMapperDto.mapToEmployeeDto(employeeById);
-        } catch (ResultException e) {
-            return Response.<String>builder()
-                    .data(e.getMessage())
-                    .success(false)
-                    .build();
-        }
-        return Response.<EmployeeDto>builder()
-                .data(employeeDto)
                 .success(true)
                 .build();
     }
