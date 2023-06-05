@@ -34,4 +34,9 @@ public class EmployeesController {
         return employeesService.createNewEmployeeResponse(employeeRequest);
     }
 
+    @PutMapping(value = "/test/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<?> updateEmployee(@RequestBody EmployeeRequest employeeRequest, @PathVariable int id) {
+        return employeesService.updateEmployeeResponse(employeeRequest, id);
+    }
+
 }

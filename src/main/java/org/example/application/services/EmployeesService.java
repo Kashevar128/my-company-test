@@ -74,13 +74,14 @@ public class EmployeesService {
         String lastName = employeeRequest.getLastName();
         String email = employeeRequest.getEmail();
         Integer age = employeeRequest.getAge();
-        if (firstName == null || lastName == null || email == null || age == null) {
+        Integer idPosition = employeeRequest.getIdPosition();
+        if (firstName == null || lastName == null || email == null || age == null || idPosition == null) {
             return Response.<String>builder()
                     .data("Заполнены не все поля.")
                     .success(false)
                     .build();
         }
-        if (!employeesRepository.createEmployee(employeeRequest)) {
+        if (!employeesRepository.saveEmployee(employeeRequest)) {
             return Response.<String>builder()
                     .data("Ошибка при создании сотрудника.")
                     .success(false)
@@ -88,6 +89,26 @@ public class EmployeesService {
         }
         return Response.<String>builder()
                 .data("Пользователь успешно создан.")
+                .success(true)
+                .build();
+    }
+
+    public Response<?> updateEmployeeResponse(EmployeeRequest employeeRequest, int id) {
+        if (employeeRequest == null) {
+            return Response.<String>builder()
+                    .data("Нулевой запрос.")
+                    .success(false)
+                    .build();
+        }
+
+        if (!employeesRepository.updateEmployee(employeeRequest, id)) {
+            return Response.<String>builder()
+                    .data("Ошибка при обновлении данных сотрудника.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Пользователь успешно обновлен.")
                 .success(true)
                 .build();
     }

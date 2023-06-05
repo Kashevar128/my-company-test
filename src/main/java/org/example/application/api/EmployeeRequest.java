@@ -14,4 +14,5 @@ public class EmployeeRequest {
     private String lastName;
     private String email;
     private Integer age;
+    private Integer idPosition;
 }
