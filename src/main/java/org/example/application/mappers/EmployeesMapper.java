@@ -8,28 +8,13 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class EmployeesMapper {
 
-    public List<Employee> createEmployeeList(ResultSet resultSet) {
-        List<Employee> employeesList = new ArrayList<>();
-        try {
-            while (resultSet.next()) {
-                Employee employee = mapToEmployee(resultSet);
-                employeesList.add(employee);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return employeesList;
-    }
-
     public Employee mapToEmployee(ResultSet resultSet) {
         try {
-            resultSet.next();
             return Employee.builder()
                     .id(resultSet.getInt("id"))
                     .firstName(resultSet.getString("first_name"))

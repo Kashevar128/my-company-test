@@ -6,34 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class ProjectsMapper {
-
-
-    public List<Project> createProjectList(ResultSet resultSet) {
-        List<Project> projectList = new ArrayList<>();
-        try {
-            while (resultSet.next()) {
-                Project project = mapToProject(resultSet);
-                projectList.add(project);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return projectList;
-    }
-
-    public List<ProjectDto> createProjectDtoList(List<Project> projectList) {
-        List<ProjectDto> projectDtoList = new ArrayList<>();
-        for (Project project : projectList) {
-            ProjectDto projectDto = mapToProjectDto(project);
-            projectDtoList.add(projectDto);
-        }
-        return projectDtoList;
-    }
 
     public Project mapToProject(ResultSet resultSet) {
         try {

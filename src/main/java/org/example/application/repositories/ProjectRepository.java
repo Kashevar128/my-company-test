@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -25,7 +26,8 @@ public class ProjectRepository {
                 "LEFT JOIN employees_to_projects t ON t.id_employee = e.id\n" +
                 "LEFT JOIN projects pr ON t.id_project = pr.id\n" +
                 "WHERE e.id = ?";
-        List<Project> projectList;
+
+        List<Project> projectList = new ArrayList<>();
         try (Connection connection = connectionService.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, id);
@@ -33,7 +35,10 @@ public class ProjectRepository {
 
             if (resultSet == null) throw new ResultException("Такого проекта не существует.");
 
-            projectList = projectsMapper.createProjectList(resultSet);
+            while (resultSet.next()) {
+                Project project = projectsMapper.mapToProject(resultSet);
+                projectList.add(project);
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

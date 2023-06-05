@@ -18,7 +18,7 @@ public class PositionsRepository {
 
     public Position getPositionById(int id) throws ResultException {
         String query = "SELECT * FROM positions p WHERE p.id = ?";
-        Position position;
+        Position position = null;
         try (Connection connection = connectionService.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, id);
@@ -26,11 +26,12 @@ public class PositionsRepository {
 
             if (resultSet == null) throw new ResultException("Такой должности не существует.");
 
-            position = positionsMapper.mapToPosition(resultSet);
+            while (resultSet.next()) {
+                position = positionsMapper.mapToPosition(resultSet);
+            }
+            return position;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        return position;
     }
 }

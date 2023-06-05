@@ -12,7 +12,6 @@ public class PositionsMapper {
 
     public Position mapToPosition(ResultSet resultSet) {
         try {
-            resultSet.next();
             return Position.builder()
                     .id(resultSet.getInt("id"))
                     .positionName(resultSet.getString("position_name"))

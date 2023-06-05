@@ -8,6 +8,7 @@ import org.example.application.model.Project;
 import org.example.application.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,6 +20,11 @@ public class ProjectService {
 
     public List<ProjectDto> getProjectDtoListById(int id) throws ResultException {
         List<Project> projectsEmployeeById = projectRepository.getProjectsEmployeeById(id);
-        return projectsMapper.createProjectDtoList(projectsEmployeeById);
+        List<ProjectDto> projectDtoList = new ArrayList<>();
+        for (Project project : projectsEmployeeById) {
+            ProjectDto projectDto = projectsMapper.mapToProjectDto(project);
+            projectDtoList.add(projectDto);
+        }
+        return projectDtoList;
     }
 }
