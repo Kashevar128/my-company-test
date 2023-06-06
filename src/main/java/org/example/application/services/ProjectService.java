@@ -1,6 +1,7 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.application.api.ProjectRequest;
 import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.PositionDto;
@@ -84,6 +85,32 @@ public class ProjectService {
                     .success(false)
                     .build();
         }
+    }
+
+    public Response<?> createNewProjectResponse(ProjectRequest projectRequest) {
+        if (projectRequest == null) {
+            return Response.<String>builder()
+                    .data("Нулевой запрос.")
+                    .success(false)
+                    .build();
+        }
+        String projectName = projectRequest.getProjectName();
+        if (projectName == null) {
+            return Response.<String>builder()
+                    .data("Название не заполнено.")
+                    .success(false)
+                    .build();
+        }
+        if (!projectRepository.savePosition(projectRequest)) {
+            return Response.<String>builder()
+                    .data("Ошибка при создании проекта.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Проект успешно создан.")
+                .success(true)
+                .build();
     }
 
 }

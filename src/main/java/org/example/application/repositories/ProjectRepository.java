@@ -1,6 +1,7 @@
 package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
+import org.example.application.api.ProjectRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.mappers.ProjectsMapper;
 import org.example.application.model.Project;
@@ -81,6 +82,18 @@ public class ProjectRepository {
             return project;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public boolean savePosition(ProjectRequest projectRequest) {
+        String query = "INSERT INTO projects (project_name) VALUES (?)";
+        try (Connection connection = connectionService.getConnection()){
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, projectRequest.getProjectName());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
