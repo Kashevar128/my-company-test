@@ -49,4 +49,15 @@ public class EmployeesMapper {
                 .age(employee.getAge())
                 .build();
     }
+
+    public EmployeeDto mapToEmployeeDto(Employee employee, PositionDto positionDto) {
+        return EmployeeDto.builder()
+                .id(employee.getId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .email(employee.getEmail())
+                .age(employee.getAge())
+                .position(positionDto)
+                .build();
+    }
 }

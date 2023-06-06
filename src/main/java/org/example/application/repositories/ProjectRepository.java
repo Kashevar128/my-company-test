@@ -6,10 +6,8 @@ import org.example.application.mappers.ProjectsMapper;
 import org.example.application.model.Project;
 import org.example.application.services.ConnectionService;
 import org.springframework.stereotype.Repository;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,5 +43,25 @@ public class ProjectRepository {
         }
 
         return projectList;
+    }
+
+    public List<Project> getAllProjects() throws ResultException {
+        String query = "SELECT * FROM projects";
+
+        List<Project> positionList = new ArrayList<>();
+        try (Connection connection = connectionService.getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            if (resultSet == null) throw new ResultException("База данных пуста.");
+
+            while (resultSet.next()) {
+                Project project = projectsMapper.mapToProject(resultSet);
+                positionList.add(project);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return positionList;
     }
 }

@@ -1,11 +1,13 @@
 package org.example.application.mappers;
 
+import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.model.Project;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Component
 public class ProjectsMapper {
@@ -25,6 +27,14 @@ public class ProjectsMapper {
         return ProjectDto.builder()
                 .id(project.getId())
                 .projectName(project.getProjectName())
+                .build();
+    }
+
+    public ProjectDto mapToProjectDto(Project project, List<EmployeeDto> employeeDtoList) {
+        return ProjectDto.builder()
+                .id(project.getId())
+                .projectName(project.getProjectName())
+                .employeeDtoList(employeeDtoList)
                 .build();
     }
 

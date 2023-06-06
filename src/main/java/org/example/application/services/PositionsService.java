@@ -22,9 +22,9 @@ import java.util.List;
 public class PositionsService {
 
     private final EmployeesRepository employeesRepository;
+    private final EmployeesMapper employeesMapper;
     private final PositionsRepository positionsRepository;
     private final PositionsMapper positionsMapper;
-    private final EmployeesMapper employeesMapper;
 
     public PositionDto getPositionDtoById(int id) throws ResultException {
         PositionDto positionDto;
@@ -59,9 +59,9 @@ public class PositionsService {
         try {
             List<PositionDto> positionDtoList = new ArrayList<>();
             for (Position position : positionsRepository.getAllPositions()) {
-                List<Employee> employeeDtoListByPositionId = employeesRepository.getEmployeeListByPositionId(position.getId());
+                List<Employee> employeeListByPositionId = employeesRepository.getEmployeeListByPositionId(position.getId());
                 List<EmployeeDto> employeeDtoList = new ArrayList<>();
-                for (Employee employee : employeeDtoListByPositionId) {
+                for (Employee employee : employeeListByPositionId) {
                     EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
                     employeeDtoList.add(employeeDto);
                 }

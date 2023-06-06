@@ -190,4 +190,25 @@ public class EmployeesRepository {
         }
         return employeeList;
     }
+
+    public List<Employee> getEmployeeByProjectId(int id) {
+        String query = "SELECT * FROM employees e\n" +
+                "LEFT JOIN employees_to_projects t ON t.id_employee = e.id\n" +
+                "LEFT JOIN projects pr ON t.id_project = pr.id\n" +
+                "WHERE pr.id = ?";
+
+        List<Employee> employeeList = new ArrayList<>();
+        try (Connection connection = connectionService.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Employee employee = employeesMapper.mapToEmployee(resultSet);
+                employeeList.add(employee);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeeList;
+    }
 }
