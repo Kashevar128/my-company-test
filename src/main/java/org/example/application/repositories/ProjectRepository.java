@@ -64,4 +64,23 @@ public class ProjectRepository {
         }
         return positionList;
     }
+
+    public Project getProjectById(int id) throws ResultException {
+        String query = "SELECT * FROM projects p WHERE p.id = ?";
+        Project project = null;
+        try (Connection connection = connectionService.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet == null) throw new ResultException("Такого проекта не существует.");
+
+            while (resultSet.next()) {
+                project = projectsMapper.mapToProject(resultSet);
+            }
+            return project;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
