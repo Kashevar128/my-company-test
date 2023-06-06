@@ -34,4 +34,9 @@ public class PositionsController {
         return positionsService.updatePositionResponse(positionRequest, id);
     }
 
+    @DeleteMapping(value = "/{id}")
+    public Response<?> deletePosition(@PathVariable int id) {
+        return positionsService.deletePositionResponse(id);
+    }
+
 }

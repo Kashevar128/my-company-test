@@ -125,4 +125,17 @@ public class PositionsService {
                 .success(true)
                 .build();
     }
+
+    public Response<?> deletePositionResponse(int id) {
+        if (!positionsRepository.deletePosition(id)) {
+            return Response.<String>builder()
+                    .data("Ошибка при удалении позиции.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Позиция успешно удалена.")
+                .success(true)
+                .build();
+    }
 }
