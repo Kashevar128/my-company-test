@@ -12,8 +12,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @Builder
 @JsonInclude(value = NON_NULL)
 public class Response<T> {
-
-    private Integer count;
     private T data;
     private Boolean success;
 }
