@@ -29,4 +29,9 @@ public class PositionsController {
         return positionsService.createNewPositionResponse(positionRequest);
     }
 
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<?> updatePosition(@RequestBody PositionRequest positionRequest, @PathVariable int id) {
+        return positionsService.updatePositionResponse(positionRequest, id);
+    }
+
 }

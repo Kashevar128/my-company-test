@@ -105,4 +105,24 @@ public class PositionsService {
                 .success(true)
                 .build();
     }
+
+    public Response<?> updatePositionResponse(PositionRequest positionRequest, int id) {
+        if (positionRequest == null) {
+            return Response.<String>builder()
+                    .data("Нулевой запрос.")
+                    .success(false)
+                    .build();
+        }
+
+        if (!positionsRepository.updatePosition(positionRequest, id)) {
+            return Response.<String>builder()
+                    .data("Ошибка при обновлении позиции.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Позиция успешно обновлена.")
+                .success(true)
+                .build();
+    }
 }
