@@ -1,6 +1,7 @@
 package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
+import org.example.application.api.PositionRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.mappers.PositionsMapper;
 import org.example.application.model.Position;
@@ -55,5 +56,17 @@ public class PositionsRepository {
             throw new RuntimeException(e);
         }
         return positionList;
+    }
+
+    public boolean savePosition(PositionRequest positionRequest) {
+        String query = "INSERT INTO positions (position_name) VALUES (?)";
+        try (Connection connection = connectionService.getConnection()){
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, positionRequest.getPositionName());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

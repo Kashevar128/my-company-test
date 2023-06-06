@@ -1,6 +1,7 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.application.api.PositionRequest;
 import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.PositionDto;
@@ -20,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PositionsService {
 
-    //private final EmployeesService employeesService;
     private final EmployeesRepository employeesRepository;
     private final PositionsRepository positionsRepository;
     private final PositionsMapper positionsMapper;
@@ -78,5 +78,31 @@ public class PositionsService {
                     .success(false)
                     .build();
         }
+    }
+
+    public Response<?> createNewPositionResponse(PositionRequest positionRequest) {
+        if (positionRequest == null) {
+            return Response.<String>builder()
+                    .data("Нулевой запрос.")
+                    .success(false)
+                    .build();
+        }
+        String positionName = positionRequest.getPositionName();
+        if (positionName == null) {
+            return Response.<String>builder()
+                    .data("Название не заполнено.")
+                    .success(false)
+                    .build();
+        }
+        if (!positionsRepository.savePosition(positionRequest)) {
+            return Response.<String>builder()
+                    .data("Ошибка при создании позиции.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Позиция успешно создана.")
+                .success(true)
+                .build();
     }
 }
