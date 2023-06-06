@@ -5,6 +5,7 @@ import org.example.application.api.Response;
 import org.example.application.services.PositionsService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,11 @@ public class PositionsController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Response<?> getAllPositions() {
         return positionsService.getAllPositionsResponse();
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<?> getPositionById(@PathVariable int id) {
+        return positionsService.getPositionDtoByIdResponse(id);
     }
 
 }
