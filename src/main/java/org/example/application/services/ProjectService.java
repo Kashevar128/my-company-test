@@ -123,12 +123,25 @@ public class ProjectService {
 
         if (!projectRepository.updateProject(projectRequest, id)) {
             return Response.<String>builder()
-                    .data("Ошибка при обновлении позиции.")
+                    .data("Ошибка при обновлении проекта.")
                     .success(false)
                     .build();
         }
         return Response.<String>builder()
-                .data("Позиция успешно обновлена.")
+                .data("Проект успешно обновлен.")
+                .success(true)
+                .build();
+    }
+
+    public Response<?> deleteProjectResponse(int id) {
+        if (!projectRepository.deleteProject(id)) {
+            return Response.<String>builder()
+                    .data("Ошибка при удалении проекта.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Проект успешно удален.")
                 .success(true)
                 .build();
     }

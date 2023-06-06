@@ -123,4 +123,16 @@ public class ProjectRepository {
         }
         return true;
     }
+
+    public boolean deleteProject(int id) {
+        String query  = "DELETE FROM projects WHERE id = ?";
+        try (Connection connection = connectionService.getConnection()){
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
