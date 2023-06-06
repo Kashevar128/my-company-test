@@ -28,4 +28,9 @@ public class ProjectController {
     public Response<?> createNewProject(@RequestBody ProjectRequest projectRequest) {
         return projectService.createNewProjectResponse(projectRequest);
     }
+
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Response<?> updateProject(@RequestBody ProjectRequest projectRequest, @PathVariable int id) {
+        return projectService.updateProjectResponse(projectRequest, id);
+    }
 }

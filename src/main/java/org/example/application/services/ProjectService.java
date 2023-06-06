@@ -113,4 +113,24 @@ public class ProjectService {
                 .build();
     }
 
+    public Response<?> updateProjectResponse(ProjectRequest projectRequest, int id) {
+        if (projectRequest == null) {
+            return Response.<String>builder()
+                    .data("Нулевой запрос.")
+                    .success(false)
+                    .build();
+        }
+
+        if (!projectRepository.updateProject(projectRequest, id)) {
+            return Response.<String>builder()
+                    .data("Ошибка при обновлении позиции.")
+                    .success(false)
+                    .build();
+        }
+        return Response.<String>builder()
+                .data("Позиция успешно обновлена.")
+                .success(true)
+                .build();
+    }
+
 }

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Repository
 @RequiredArgsConstructor
@@ -95,5 +97,30 @@ public class ProjectRepository {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public boolean updateProject(ProjectRequest projectRequest, int id) {
+        String projectNameSQL = "UPDATE projects SET project_name = ? WHERE id = ?";
+
+        try (Connection connection = connectionService.getConnection()){
+            Consumer<String> projectNameConsumer = (projectName) -> {
+                PreparedStatement statement;
+                try {
+                    statement = connection.prepareStatement(projectNameSQL);
+                    statement.setString(1, projectName);
+                    statement.setInt(2, id);
+                    statement.executeUpdate();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+
+            String projectName = projectRequest.getProjectName();
+            Optional.ofNullable(projectName).ifPresent(projectNameConsumer);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
