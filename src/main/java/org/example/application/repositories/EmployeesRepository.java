@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.api.EmployeeRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
-import org.example.application.mappers.EmployeesMapper;
 import org.example.application.model.Employee;
 import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
@@ -33,25 +32,17 @@ public class EmployeesRepository {
                                 .getResultList());
         Optional<List<Employee>> employees = hibernateService.executeQuery(employeesCallback);
         if (employees.isPresent()) return employees.get();
-        else throw new ResultException("База данных пуста");
+        else throw new ResultException("База данных пуста.");
     }
 
     public Employee getEmployeeById(int id) throws ResultException {
-        String query = "SELECT * FROM employees WHERE id = ?";
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Optional<Employee>> employeeCallback = () ->
+                Optional.ofNullable(entityManager.find(Employee.class, id));
+        Optional<Employee> employee = hibernateService.executeQuery(employeeCallback);
+        if (employee.isPresent()) return employee.get();
+        else throw new RuntimeException("Такого пользователя не существует.");
 
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet == null) throw new ResultException("Такого пользователя не существует.");
-
-            Employee employee = null;
-
-            return employee;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public boolean saveEmployee(EmployeeRequest employeeRequest) {

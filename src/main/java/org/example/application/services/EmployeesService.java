@@ -23,7 +23,6 @@ public class EmployeesService {
 
     private final PositionsMapper positionsMapper;
     private final ProjectsMapper projectsMapper;
-    private final ProjectService projectService;
     private final EmployeesRepository employeesRepository;
     private final EmployeesMapper employeesMapper;
 
@@ -51,11 +50,11 @@ public class EmployeesService {
     public Response<?> getEmployeeByIdResponse(int id) {
         try {
             Employee employee = employeesRepository.getEmployeeById(id);
-           //// PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
-            List<ProjectDto> projectDtoListById = projectService.getProjectDtoListById(employee.getId());
-          //  EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDtoById, projectDtoListById);
+            PositionDto positionDto = positionsMapper.mapToPositionDto(employee);
+            List<ProjectDto> projectDtoList = projectsMapper.mapToProjectDtoList(employee);
+            EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDto, projectDtoList);
             return Response.<EmployeeDto>builder()
-                    .data(null)
+                    .data(employeeDto)
                     .success(true)
                     .build();
         } catch (ResultException e) {
