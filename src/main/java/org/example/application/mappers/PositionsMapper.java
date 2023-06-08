@@ -23,6 +23,7 @@ public class PositionsMapper {
     }
 
     public PositionDto mapToPositionDto(Employee employee) {
+        if (employee.getPosition() == null) return new PositionDto();
         return PositionDto.builder()
                 .id(employee.getPosition().getId())
                 .positionName(employee.getPosition().getPositionName())

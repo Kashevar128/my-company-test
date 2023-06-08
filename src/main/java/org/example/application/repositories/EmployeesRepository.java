@@ -41,24 +41,22 @@ public class EmployeesRepository {
                 Optional.ofNullable(entityManager.find(Employee.class, id));
         Optional<Employee> employee = hibernateService.executeQuery(employeeCallback);
         if (employee.isPresent()) return employee.get();
-        else throw new RuntimeException("Такого пользователя не существует.");
+        else throw new ResultException("Такого пользователя не существует.");
 
     }
 
-    public boolean saveEmployee(EmployeeRequest employeeRequest) {
-        String query = "INSERT INTO employees (first_name, last_name, email, age, id_position) VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, employeeRequest.getFirstName());
-            statement.setString(2, employeeRequest.getLastName());
-            statement.setString(3, employeeRequest.getEmail());
-            statement.setInt(4, employeeRequest.getAge());
-            statement.setInt(5, employeeRequest.getIdPosition());
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean saveEmployee(EmployeeRequest employeeRequest) throws ResultException {
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Boolean> createEmployeeCallback = () -> {
+            Employee employee = new Employee();
+            employee.setFirstName(employeeRequest.getFirstName());
+            employee.setLastName(employeeRequest.getLastName());
+            employee.setEmail(employeeRequest.getEmail());
+            employee.setAge(employeeRequest.getAge());
+            entityManager.persist(employee);
+            return true;
+        };
+        return hibernateService.executeQuery(createEmployeeCallback);
     }
 
     public boolean updateEmployee(EmployeeRequest employeeRequest, int id) {

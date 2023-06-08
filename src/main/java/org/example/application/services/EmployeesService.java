@@ -76,8 +76,7 @@ public class EmployeesService {
         String lastName = employeeRequest.getLastName();
         String email = employeeRequest.getEmail();
         Integer age = employeeRequest.getAge();
-        Integer idPosition = employeeRequest.getIdPosition();
-        if (firstName == null || lastName == null || email == null || age == null || idPosition == null) {
+        if (firstName == null || lastName == null || email == null || age == null) {
             return Response.<String>builder()
                     .data("Заполнены не все поля.")
                     .success(false)

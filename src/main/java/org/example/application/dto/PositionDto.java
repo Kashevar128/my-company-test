@@ -1,8 +1,10 @@
 package org.example.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,6 +12,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(value = NON_NULL)
 public class PositionDto {
     private int id;

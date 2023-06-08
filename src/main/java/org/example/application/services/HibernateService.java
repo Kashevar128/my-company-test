@@ -17,7 +17,6 @@ public class HibernateService {
     private EntityManager entityManager;
 
     public <T> T executeQuery(MyCallback<T> callback) {
-        entityManager = hibernateManagerFactory.getEntityManager();
         entityManager.getTransaction().begin();
         T call = callback.call();
         entityManager.getTransaction().commit();
