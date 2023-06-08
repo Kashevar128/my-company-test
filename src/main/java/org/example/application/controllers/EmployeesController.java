@@ -14,11 +14,6 @@ public class EmployeesController {
 
     private final EmployeesService employeesService;
 
-    @GetMapping(value = "/test",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<Integer> getTest() {
-        return employeesService.test();
-    }
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Response<?> getAllEmployees() {
         return employeesService.getAllEmployeesResponse();

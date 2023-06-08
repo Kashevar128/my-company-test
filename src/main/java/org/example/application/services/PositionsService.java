@@ -22,7 +22,6 @@ import java.util.List;
 public class PositionsService {
 
     private final EmployeesRepository employeesRepository;
-    private final EmployeesMapper employeesMapper;
     private final PositionsRepository positionsRepository;
     private final PositionsMapper positionsMapper;
 
@@ -39,8 +38,8 @@ public class PositionsService {
             List<Employee> employeeDtoListByPositionId = employeesRepository.getEmployeeListByPositionId(position.getId());
             List<EmployeeDto> employeeDtoList = new ArrayList<>();
             for (Employee employee : employeeDtoListByPositionId) {
-                EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
-                employeeDtoList.add(employeeDto);
+            //    EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
+            //    employeeDtoList.add(employeeDto);
             }
             PositionDto positionDto = positionsMapper.mapToPositionDto(position, employeeDtoList);
             return Response.<PositionDto>builder()
@@ -62,8 +61,8 @@ public class PositionsService {
                 List<Employee> employeeListByPositionId = employeesRepository.getEmployeeListByPositionId(position.getId());
                 List<EmployeeDto> employeeDtoList = new ArrayList<>();
                 for (Employee employee : employeeListByPositionId) {
-                    EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
-                    employeeDtoList.add(employeeDto);
+                  //  EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
+                   // employeeDtoList.add(employeeDto);
                 }
                 PositionDto positionDto = positionsMapper.mapToPositionDto(position, employeeDtoList);
                 positionDtoList.add(positionDto);

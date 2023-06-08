@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.api.ProjectRequest;
 import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
-import org.example.application.dto.PositionDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.exeptions.ResultException;
 import org.example.application.mappers.EmployeesMapper;
@@ -25,8 +24,6 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectsMapper projectsMapper;
     private final EmployeesRepository employeesRepository;
-    private final EmployeesMapper employeesMapper;
-    private final PositionsService positionsService;
 
     public List<ProjectDto> getProjectDtoListById(int id) throws ResultException {
         List<Project> projectsEmployeeById = projectRepository.getProjectsEmployeeById(id);
@@ -45,12 +42,12 @@ public class ProjectService {
                 List<Employee> employeeByProjectId = employeesRepository.getEmployeeByProjectId(project.getId());
                 List<EmployeeDto> employeeDtoList = new ArrayList<>();
                 for (Employee employee : employeeByProjectId) {
-                    PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
-                    EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDtoById);
-                    employeeDtoList.add(employeeDto);
+               //     PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
+               //     EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, null);
+                //    employeeDtoList.add(employeeDto);
                 }
-                ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
-                projectDtoList.add(projectDto);
+               // ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
+               // projectDtoList.add(projectDto);
             }
             return Response.<List<ProjectDto>>builder()
                     .data(projectDtoList)
@@ -70,13 +67,13 @@ public class ProjectService {
             List<Employee> employeeByProjectId = employeesRepository.getEmployeeByProjectId(project.getId());
             List<EmployeeDto> employeeDtoList = new ArrayList<>();
             for (Employee employee : employeeByProjectId) {
-                PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
-                EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDtoById);
-                employeeDtoList.add(employeeDto);
+       //         PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
+           //     EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, null);
+            //    employeeDtoList.add(employeeDto);
             }
-            ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
+           // ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
             return Response.<ProjectDto>builder()
-                    .data(projectDto)
+                    .data(null)
                     .success(true)
                     .build();
         } catch (ResultException e) {

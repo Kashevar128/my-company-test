@@ -3,11 +3,14 @@ package org.example.application.repositories;
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.EmployeeRequest;
 import org.example.application.exeptions.ResultException;
+import org.example.application.interfaces.MyCallback;
 import org.example.application.mappers.EmployeesMapper;
 import org.example.application.model.Employee;
 import org.example.application.services.ConnectionService;
+import org.example.application.services.HibernateService;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,26 +22,18 @@ import java.util.function.Consumer;
 public class EmployeesRepository {
 
     private final ConnectionService connectionService;
-    private final EmployeesMapper employeesMapper;
+    private final HibernateService hibernateService;
 
     public List<Employee> getAllEmployees() throws ResultException {
-        String query = "SELECT * FROM employees";
-
-        List<Employee> employeesList = new ArrayList<>();
-        try (Connection connection = connectionService.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            if (resultSet == null) throw new ResultException("База данных пуста.");
-
-            while (resultSet.next()) {
-                Employee employee = employeesMapper.mapToEmployee(resultSet);
-                employeesList.add(employee);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return employeesList;
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Optional<List<Employee>>> employeesCallback = () ->
+                Optional
+                        .ofNullable(entityManager
+                                .createQuery("SELECT e FROM Employee e", Employee.class)
+                                .getResultList());
+        Optional<List<Employee>> employees = hibernateService.executeQuery(employeesCallback);
+        if (employees.isPresent()) return employees.get();
+        else throw new ResultException("База данных пуста");
     }
 
     public Employee getEmployeeById(int id) throws ResultException {
@@ -53,9 +48,6 @@ public class EmployeesRepository {
 
             Employee employee = null;
 
-            while (resultSet.next()) {
-                employee = employeesMapper.mapToEmployee(resultSet);
-            }
             return employee;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -64,7 +56,7 @@ public class EmployeesRepository {
 
     public boolean saveEmployee(EmployeeRequest employeeRequest) {
         String query = "INSERT INTO employees (first_name, last_name, email, age, id_position) VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = connectionService.getConnection()){
+        try (Connection connection = connectionService.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, employeeRequest.getFirstName());
             statement.setString(2, employeeRequest.getLastName());
@@ -77,6 +69,7 @@ public class EmployeesRepository {
             return false;
         }
     }
+
     public boolean updateEmployee(EmployeeRequest employeeRequest, int id) {
 
         String firstNameSQL = "UPDATE  employees SET first_name = ? WHERE id = ?";
@@ -85,7 +78,7 @@ public class EmployeesRepository {
         String ageSQL = "UPDATE  employees SET age = ? WHERE id = ?";
         String idPositionSQL = "UPDATE  employees SET id_position = ? WHERE id = ?";
 
-        try (Connection connection = connectionService.getConnection()){
+        try (Connection connection = connectionService.getConnection()) {
 
             Consumer<String> firstNameConsumer = (firstName) -> {
                 PreparedStatement statement;
@@ -162,8 +155,8 @@ public class EmployeesRepository {
     }
 
     public boolean deleteEmployee(int id) {
-        String query  = "DELETE FROM employees WHERE id = ?";
-        try (Connection connection = connectionService.getConnection()){
+        String query = "DELETE FROM employees WHERE id = ?";
+        try (Connection connection = connectionService.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;
@@ -181,10 +174,7 @@ public class EmployeesRepository {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Employee employee = employeesMapper.mapToEmployee(resultSet);
-                employeeList.add(employee);
-            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -202,10 +192,7 @@ public class EmployeesRepository {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Employee employee = employeesMapper.mapToEmployee(resultSet);
-                employeeList.add(employee);
-            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
