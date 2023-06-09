@@ -23,7 +23,6 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class PositionsRepository {
 
-    private final ConnectionService connectionService;
     private final HibernateService hibernateService;
 
     public Position getPositionById(int id) throws ResultException {
@@ -84,12 +83,16 @@ public class PositionsRepository {
     }
 
     public boolean deletePosition(int id) {
-        String query  = "DELETE FROM positions WHERE id = ?";
-        try (Connection connection = connectionService.getConnection()){
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
+        try {
+            EntityManager entityManager = hibernateService.getEntityManager();
+            MyCallback<Boolean> deletePositionCallback = () -> {
+                Optional<Position> positionOpt = Optional.ofNullable(entityManager.find(Position.class, id));
+                if (!positionOpt.isPresent()) return false;
+                entityManager.remove(positionOpt.get());
+                return true;
+            };
+            return hibernateService.executeQuery(deletePositionCallback);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
