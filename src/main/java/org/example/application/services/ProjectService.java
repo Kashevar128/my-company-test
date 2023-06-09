@@ -3,6 +3,7 @@ package org.example.application.services;
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.CreateProjectRequest;
 import org.example.application.api.Response;
+import org.example.application.api.UpdateProjectRequest;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.exeptions.ResultException;
@@ -107,15 +108,15 @@ public class ProjectService {
                 .build();
     }
 
-    public Response<?> updateProjectResponse(CreateProjectRequest createProjectRequest, int id) {
-        if (createProjectRequest == null) {
+    public Response<?> updateProjectResponse(UpdateProjectRequest updateProjectRequest, int id) {
+        if (updateProjectRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
 
-        if (!projectRepository.updateProject(createProjectRequest, id)) {
+        if (!projectRepository.updateProject(updateProjectRequest, id)) {
             return Response.<String>builder()
                     .data("Ошибка при обновлении проекта.")
                     .success(false)

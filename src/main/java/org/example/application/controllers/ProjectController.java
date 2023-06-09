@@ -3,6 +3,7 @@ package org.example.application.controllers;
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.CreateProjectRequest;
 import org.example.application.api.Response;
+import org.example.application.api.UpdateProjectRequest;
 import org.example.application.services.ProjectService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,8 @@ public class ProjectController {
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> updateProject(@RequestBody CreateProjectRequest createProjectRequest, @PathVariable int id) {
-        return projectService.updateProjectResponse(createProjectRequest, id);
+    public Response<?> updateProject(@RequestBody UpdateProjectRequest updateProjectRequest, @PathVariable int id) {
+        return projectService.updateProjectResponse(updateProjectRequest, id);
     }
 
     @DeleteMapping(value = "/{id}")

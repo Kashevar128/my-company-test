@@ -2,6 +2,7 @@ package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.CreateProjectRequest;
+import org.example.application.api.UpdateProjectRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
 import org.example.application.mappers.ProjectsMapper;
@@ -89,29 +90,25 @@ public class ProjectRepository {
         return hibernateService.executeQuery(createPositionCallback);
     }
 
-    public boolean updateProject(CreateProjectRequest createProjectRequest, int id) {
-        String projectNameSQL = "UPDATE projects SET project_name = ? WHERE id = ?";
+    public boolean updateProject(UpdateProjectRequest updateProjectRequest, int id) {
+        try {
+            String projectName = updateProjectRequest.getProjectName();
 
-        try (Connection connection = connectionService.getConnection()) {
-            Consumer<String> projectNameConsumer = (projectName) -> {
-                PreparedStatement statement;
-                try {
-                    statement = connection.prepareStatement(projectNameSQL);
-                    statement.setString(1, projectName);
-                    statement.setInt(2, id);
-                    statement.executeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+            EntityManager entityManager = hibernateService.getEntityManager();
+            MyCallback<Boolean> updateCallable = () -> {
+                Optional<Project> projectOpt = Optional.ofNullable(entityManager.find(Project.class, id));
+                Project project;
+                if (!projectOpt.isPresent()) return false;
+                else project = projectOpt.get();
+
+                Optional.ofNullable(projectName).ifPresent(project::setProjectName);
+                return true;
             };
-
-            String projectName = createProjectRequest.getProjectName();
-            Optional.ofNullable(projectName).ifPresent(projectNameConsumer);
-        } catch (SQLException e) {
+            return hibernateService.executeQuery(updateCallable);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
     public boolean deleteProject(int id) {
