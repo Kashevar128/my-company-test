@@ -1,7 +1,8 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.EmployeeRequest;
+import org.example.application.api.EmployeeCreateRequest;
+import org.example.application.api.EmployeeUpdateRequest;
 import org.example.application.dto.PositionDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.exeptions.ResultException;
@@ -65,24 +66,24 @@ public class EmployeesService {
         }
     }
 
-    public Response<?> createNewEmployeeResponse(EmployeeRequest employeeRequest) {
-        if (employeeRequest == null) {
+    public Response<?> createNewEmployeeResponse(EmployeeCreateRequest employeeCreateRequest) {
+        if (employeeCreateRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
-        String firstName = employeeRequest.getFirstName();
-        String lastName = employeeRequest.getLastName();
-        String email = employeeRequest.getEmail();
-        Integer age = employeeRequest.getAge();
+        String firstName = employeeCreateRequest.getFirstName();
+        String lastName = employeeCreateRequest.getLastName();
+        String email = employeeCreateRequest.getEmail();
+        Integer age = employeeCreateRequest.getAge();
         if (firstName == null || lastName == null || email == null || age == null) {
             return Response.<String>builder()
                     .data("Заполнены не все поля.")
                     .success(false)
                     .build();
         }
-        if (!employeesRepository.saveEmployee(employeeRequest)) {
+        if (!employeesRepository.saveEmployee(employeeCreateRequest)) {
             return Response.<String>builder()
                     .data("Ошибка при создании сотрудника.")
                     .success(false)
@@ -94,15 +95,15 @@ public class EmployeesService {
                 .build();
     }
 
-    public Response<?> updateEmployeeResponse(EmployeeRequest employeeRequest, int id) {
-        if (employeeRequest == null) {
+    public Response<?> updateEmployeeResponse(EmployeeUpdateRequest employeeUpdateRequest, int id) {
+        if (employeeUpdateRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
 
-        if (!employeesRepository.updateEmployee(employeeRequest, id)) {
+        if (!employeesRepository.updateEmployee(employeeUpdateRequest, id)) {
             return Response.<String>builder()
                     .data("Ошибка при обновлении данных сотрудника.")
                     .success(false)

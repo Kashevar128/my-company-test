@@ -46,6 +46,4 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "id_project")
     )
     private List<Project> projects;
-
-
 }

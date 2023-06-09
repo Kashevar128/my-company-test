@@ -3,11 +3,14 @@ package org.example.application.repositories;
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.ProjectRequest;
 import org.example.application.exeptions.ResultException;
+import org.example.application.interfaces.MyCallback;
 import org.example.application.mappers.ProjectsMapper;
 import org.example.application.model.Project;
 import org.example.application.services.ConnectionService;
+import org.example.application.services.HibernateService;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +23,7 @@ public class ProjectRepository {
 
     private final ConnectionService connectionService;
     private final ProjectsMapper projectsMapper;
+    private final HibernateService hibernateService;
 
     public List<Project> getProjectsEmployeeById(int id) throws ResultException {
         String query = "SELECT pr.id, pr.project_name\n" +
@@ -69,27 +73,16 @@ public class ProjectRepository {
     }
 
     public Project getProjectById(int id) throws ResultException {
-        String query = "SELECT * FROM projects p WHERE p.id = ?";
-        Project project = null;
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet == null) throw new ResultException("Такого проекта не существует.");
-
-            while (resultSet.next()) {
-                project = projectsMapper.mapToProject(resultSet);
-            }
-            return project;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Optional<Project>> myCallback = () -> Optional.ofNullable(entityManager.find(Project.class, id));
+        Optional<Project> project = hibernateService.executeQuery(myCallback);
+        if (!project.isPresent()) throw new ResultException("Такого проекта не существует.");
+        return project.get();
     }
 
     public boolean savePosition(ProjectRequest projectRequest) {
         String query = "INSERT INTO projects (project_name) VALUES (?)";
-        try (Connection connection = connectionService.getConnection()){
+        try (Connection connection = connectionService.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, projectRequest.getProjectName());
             return statement.executeUpdate() > 0;
@@ -102,7 +95,7 @@ public class ProjectRepository {
     public boolean updateProject(ProjectRequest projectRequest, int id) {
         String projectNameSQL = "UPDATE projects SET project_name = ? WHERE id = ?";
 
-        try (Connection connection = connectionService.getConnection()){
+        try (Connection connection = connectionService.getConnection()) {
             Consumer<String> projectNameConsumer = (projectName) -> {
                 PreparedStatement statement;
                 try {
@@ -125,8 +118,8 @@ public class ProjectRepository {
     }
 
     public boolean deleteProject(int id) {
-        String query  = "DELETE FROM projects WHERE id = ?";
-        try (Connection connection = connectionService.getConnection()){
+        String query = "DELETE FROM projects WHERE id = ?";
+        try (Connection connection = connectionService.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             return statement.executeUpdate() > 0;

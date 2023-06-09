@@ -6,7 +6,6 @@ import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.PositionDto;
 import org.example.application.exeptions.ResultException;
-import org.example.application.mappers.EmployeesMapper;
 import org.example.application.mappers.PositionsMapper;
 import org.example.application.model.Employee;
 import org.example.application.model.Position;
@@ -19,17 +18,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PositionsService {
+public class PositionService {
 
     private final EmployeesRepository employeesRepository;
     private final PositionsRepository positionsRepository;
     private final PositionsMapper positionsMapper;
 
-    public PositionDto getPositionDtoById(int id) throws ResultException {
-        PositionDto positionDto;
-        Position positionById = positionsRepository.getPositionById(id);
-        positionDto = positionsMapper.mapToPositionDto(positionById);
-        return positionDto;
+    public Position getPositionById(int id) throws ResultException {
+        return positionsRepository.getPositionById(id);
     }
 
     public Response<?> getPositionDtoByIdResponse(int id) throws ResultException {

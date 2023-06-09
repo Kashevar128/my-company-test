@@ -6,6 +6,7 @@ import org.example.application.interfaces.MyCallback;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import java.sql.SQLException;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +18,15 @@ public class HibernateService {
     private EntityManager entityManager;
 
     public <T> T executeQuery(MyCallback<T> callback) {
-        entityManager.getTransaction().begin();
-        T call = callback.call();
-        entityManager.getTransaction().commit();
-        entityManager.close();
+        T call = null;
+        try {
+            entityManager.getTransaction().begin();
+            call = callback.call();
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
         return call;
     }
 

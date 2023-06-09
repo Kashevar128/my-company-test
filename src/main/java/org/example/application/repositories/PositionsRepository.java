@@ -3,11 +3,15 @@ package org.example.application.repositories;
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.PositionRequest;
 import org.example.application.exeptions.ResultException;
+import org.example.application.interfaces.MyCallback;
 import org.example.application.mappers.PositionsMapper;
 import org.example.application.model.Position;
 import org.example.application.services.ConnectionService;
+import org.example.application.services.HibernateService;
+import org.hibernate.engine.jdbc.LobCreationContext;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,24 +24,14 @@ public class PositionsRepository {
 
     private final ConnectionService connectionService;
     private final PositionsMapper positionsMapper;
+    private final HibernateService hibernateService;
 
     public Position getPositionById(int id) throws ResultException {
-        String query = "SELECT * FROM positions p WHERE p.id = ?";
-        Position position = null;
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet == null) throw new ResultException("Такой должности не существует.");
-
-            while (resultSet.next()) {
-                position = positionsMapper.mapToPosition(resultSet);
-            }
-            return position;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Optional<Position>> myCallback = () -> Optional.ofNullable(entityManager.find(Position.class, id));
+        Optional<Position> positionOpt = hibernateService.executeQuery(myCallback);
+        if (!positionOpt.isPresent()) throw new RuntimeException("Нет такой позиции");
+        else return positionOpt.get();
     }
 
     public List<Position> getAllPositions() throws ResultException {
