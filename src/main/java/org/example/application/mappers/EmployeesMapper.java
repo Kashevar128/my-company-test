@@ -22,5 +22,15 @@ public class EmployeesMapper {
                 .build();
     }
 
+    public EmployeeDto mapToEmployeeDtoSimple(Employee employee) {
+        return EmployeeDto.builder()
+                .id(employee.getId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
+                .email(employee.getEmail())
+                .age(employee.getAge())
+                .build();
+    }
+
 
 }

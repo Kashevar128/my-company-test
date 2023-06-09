@@ -6,6 +6,7 @@ import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.PositionDto;
 import org.example.application.exeptions.ResultException;
+import org.example.application.mappers.EmployeesMapper;
 import org.example.application.mappers.PositionsMapper;
 import org.example.application.model.Employee;
 import org.example.application.model.Position;
@@ -23,6 +24,7 @@ public class PositionService {
     private final EmployeesRepository employeesRepository;
     private final PositionsRepository positionsRepository;
     private final PositionsMapper positionsMapper;
+    private final EmployeesMapper employeesMapper;
 
     public Position getPositionById(int id) throws ResultException {
         return positionsRepository.getPositionById(id);
@@ -54,11 +56,10 @@ public class PositionService {
         try {
             List<PositionDto> positionDtoList = new ArrayList<>();
             for (Position position : positionsRepository.getAllPositions()) {
-                List<Employee> employeeListByPositionId = employeesRepository.getEmployeeListByPositionId(position.getId());
                 List<EmployeeDto> employeeDtoList = new ArrayList<>();
-                for (Employee employee : employeeListByPositionId) {
-                  //  EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
-                   // employeeDtoList.add(employeeDto);
+                for (Employee employee : position.getEmployeeList()) {
+                    EmployeeDto employeeDto = employeesMapper.mapToEmployeeDtoSimple(employee);
+                    employeeDtoList.add(employeeDto);
                 }
                 PositionDto positionDto = positionsMapper.mapToPositionDto(position, employeeDtoList);
                 positionDtoList.add(positionDto);

@@ -5,6 +5,7 @@ import org.example.application.api.PositionRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
 import org.example.application.mappers.PositionsMapper;
+import org.example.application.model.Employee;
 import org.example.application.model.Position;
 import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
@@ -23,7 +24,6 @@ import java.util.function.Consumer;
 public class PositionsRepository {
 
     private final ConnectionService connectionService;
-    private final PositionsMapper positionsMapper;
     private final HibernateService hibernateService;
 
     public Position getPositionById(int id) throws ResultException {
@@ -35,23 +35,15 @@ public class PositionsRepository {
     }
 
     public List<Position> getAllPositions() throws ResultException {
-        String query = "SELECT * FROM positions";
-
-        List<Position> positionList = new ArrayList<>();
-        try (Connection connection = connectionService.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            if (resultSet == null) throw new ResultException("База данных пуста.");
-
-            while (resultSet.next()) {
-                Position position = positionsMapper.mapToPosition(resultSet);
-                positionList.add(position);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return positionList;
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Optional<List<Position>>> positionsCallback = () ->
+                Optional
+                        .ofNullable(entityManager
+                                .createQuery("SELECT e FROM Position e", Position.class)
+                                .getResultList());
+        Optional<List<Position>> positions = hibernateService.executeQuery(positionsCallback);
+        if (positions.isPresent()) return positions.get();
+        else throw new ResultException("База данных пуста.");
     }
 
     public boolean savePosition(PositionRequest positionRequest) {
