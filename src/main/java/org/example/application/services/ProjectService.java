@@ -11,7 +11,6 @@ import org.example.application.mappers.EmployeesMapper;
 import org.example.application.mappers.ProjectsMapper;
 import org.example.application.model.Employee;
 import org.example.application.model.Project;
-import org.example.application.repositories.EmployeesRepository;
 import org.example.application.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,18 +23,8 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectsMapper projectsMapper;
-    private final EmployeesRepository employeesRepository;
     private final EmployeesMapper employeesMapper;
 
-    public List<ProjectDto> getProjectDtoListById(int id) throws ResultException {
-        List<Project> projectsEmployeeById = projectRepository.getProjectsEmployeeById(id);
-        List<ProjectDto> projectDtoList = new ArrayList<>();
-        for (Project project : projectsEmployeeById) {
-            ProjectDto projectDto = projectsMapper.mapToProjectDto(project);
-            projectDtoList.add(projectDto);
-        }
-        return projectDtoList;
-    }
 
     public Response<?> getAllProjectsResponse() {
         try {
@@ -46,7 +35,7 @@ public class ProjectService {
                     EmployeeDto employeeDto = employeesMapper.mapToEmployeeDtoSimple(employee);
                     employeeDtoList.add(employeeDto);
                 }
-                ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
+                ProjectDto projectDto = projectsMapper.mapToProjectDtoSimple(project, employeeDtoList);
                 projectDtoList.add(projectDto);
             }
             return Response.<List<ProjectDto>>builder()
@@ -69,7 +58,7 @@ public class ProjectService {
                 EmployeeDto employeeDto = employeesMapper.mapToEmployeeDtoSimple(employee);
                 employeeDtoList.add(employeeDto);
             }
-            ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
+            ProjectDto projectDto = projectsMapper.mapToProjectDtoSimple(project, employeeDtoList);
             return Response.<ProjectDto>builder()
                     .data(projectDto)
                     .success(true)

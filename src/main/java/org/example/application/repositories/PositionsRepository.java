@@ -5,19 +5,12 @@ import org.example.application.api.CreatePositionRequest;
 import org.example.application.api.UpdatePositionRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
-import org.example.application.model.Employee;
 import org.example.application.model.Position;
-import org.example.application.model.Project;
-import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @Repository
 @RequiredArgsConstructor

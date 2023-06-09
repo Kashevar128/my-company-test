@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.hibernate.HibernateManagerFactory;
 import org.example.application.interfaces.MyCallback;
 import org.springframework.stereotype.Service;
-
 import javax.persistence.EntityManager;
-import java.sql.SQLException;
 
 @Service
 @RequiredArgsConstructor

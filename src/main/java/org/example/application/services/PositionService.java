@@ -11,7 +11,6 @@ import org.example.application.mappers.EmployeesMapper;
 import org.example.application.mappers.PositionsMapper;
 import org.example.application.model.Employee;
 import org.example.application.model.Position;
-import org.example.application.repositories.EmployeesRepository;
 import org.example.application.repositories.PositionsRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +21,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PositionService {
 
-    private final EmployeesRepository employeesRepository;
     private final PositionsRepository positionsRepository;
     private final PositionsMapper positionsMapper;
     private final EmployeesMapper employeesMapper;
-
-    public Position getPositionById(int id) throws ResultException {
-        return positionsRepository.getPositionById(id);
-    }
 
     public Response<?> getPositionDtoByIdResponse(int id) throws ResultException {
         try {
@@ -39,7 +33,7 @@ public class PositionService {
                 EmployeeDto employeeDto = employeesMapper.mapToEmployeeDtoSimple(employee);
                 employeeDtoList.add(employeeDto);
             }
-            PositionDto positionDto = positionsMapper.mapToPositionDto(position, employeeDtoList);
+            PositionDto positionDto = positionsMapper.mapToPositionDtoSimple(position, employeeDtoList);
             return Response.<PositionDto>builder()
                     .data(positionDto)
                     .success(true)
@@ -61,7 +55,7 @@ public class PositionService {
                     EmployeeDto employeeDto = employeesMapper.mapToEmployeeDtoSimple(employee);
                     employeeDtoList.add(employeeDto);
                 }
-                PositionDto positionDto = positionsMapper.mapToPositionDto(position, employeeDtoList);
+                PositionDto positionDto = positionsMapper.mapToPositionDtoSimple(position, employeeDtoList);
                 positionDtoList.add(positionDto);
             }
             return Response.<List<PositionDto>>builder()

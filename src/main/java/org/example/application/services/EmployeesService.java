@@ -31,7 +31,7 @@ public class EmployeesService {
         try {
             List<EmployeeDto> employeeDtoList = new ArrayList<>();
             for (Employee employee : employeesRepository.getAllEmployees()) {
-                PositionDto positionDto = positionsMapper.mapToPositionDto(employee);
+                PositionDto positionDto = positionsMapper.mapToPositionDtoSimple(employee);
                 List<ProjectDto> projectDtoList = projectsMapper.mapToProjectDtoList(employee);
                 EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDto, projectDtoList);
                 employeeDtoList.add(employeeDto);
@@ -51,7 +51,7 @@ public class EmployeesService {
     public Response<?> getEmployeeByIdResponse(int id) {
         try {
             Employee employee = employeesRepository.getEmployeeById(id);
-            PositionDto positionDto = positionsMapper.mapToPositionDto(employee);
+            PositionDto positionDto = positionsMapper.mapToPositionDtoSimple(employee);
             List<ProjectDto> projectDtoList = projectsMapper.mapToProjectDtoList(employee);
             EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, positionDto, projectDtoList);
             return Response.<EmployeeDto>builder()
@@ -127,17 +127,6 @@ public class EmployeesService {
                 .success(true)
                 .build();
     }
-
-//    public List<EmployeeDto> getEmployeeDtoListByPositionId(int id) {
-//        List<Employee> employeeDtoListByPositionId = employeesRepository.getEmployeeListByPositionId(id);
-//        List<EmployeeDto> employeeDtoList = new ArrayList<>();
-//        for (Employee employee : employeeDtoListByPositionId) {
-//            EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
-//            employeeDtoList.add(employeeDto);
-//        }
-//        return employeeDtoList;
-//    }
-//
 
 
 

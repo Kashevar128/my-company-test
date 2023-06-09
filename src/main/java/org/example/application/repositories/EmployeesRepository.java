@@ -8,12 +8,10 @@ import org.example.application.interfaces.MyCallback;
 import org.example.application.model.Employee;
 import org.example.application.model.Position;
 import org.example.application.model.Project;
-import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +20,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmployeesRepository {
 
-    private final ConnectionService connectionService;
     private final PositionsRepository positionsRepository;
     private final ProjectRepository projectRepository;
     private final HibernateService hibernateService;
@@ -126,38 +123,5 @@ public class EmployeesRepository {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public List<Employee> getEmployeeListByPositionId(int id) {
-        String query = "SELECT * FROM employees e WHERE e.id_position = ?";
-
-        List<Employee> employeeList = new ArrayList<>();
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return employeeList;
-    }
-
-    public List<Employee> getEmployeeByProjectId(int id) {
-        String query = "SELECT * FROM employees e\n" +
-                "LEFT JOIN employees_to_projects t ON t.id_employee = e.id\n" +
-                "LEFT JOIN projects pr ON t.id_project = pr.id\n" +
-                "WHERE pr.id = ?";
-
-        List<Employee> employeeList = new ArrayList<>();
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return employeeList;
     }
 }
