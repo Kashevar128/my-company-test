@@ -65,16 +65,14 @@ public class ProjectService {
     public Response<?> getProjectDtoByIdResponse(int id) throws ResultException {
         try {
             Project project = projectRepository.getProjectById(id);
-            List<Employee> employeeByProjectId = employeesRepository.getEmployeeByProjectId(project.getId());
             List<EmployeeDto> employeeDtoList = new ArrayList<>();
-            for (Employee employee : employeeByProjectId) {
-                //         PositionDto positionDtoById = positionsService.getPositionDtoById(employee.getIdPosition());
-                //     EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee, null);
-                //    employeeDtoList.add(employeeDto);
+            for (Employee employee : project.getEmployees()) {
+                EmployeeDto employeeDto = employeesMapper.mapToEmployeeDtoSimple(employee);
+                employeeDtoList.add(employeeDto);
             }
-            // ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
+            ProjectDto projectDto = projectsMapper.mapToProjectDto(project, employeeDtoList);
             return Response.<ProjectDto>builder()
-                    .data(null)
+                    .data(projectDto)
                     .success(true)
                     .build();
         } catch (ResultException e) {
