@@ -1,8 +1,8 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.EmployeeCreateRequest;
-import org.example.application.api.EmployeeUpdateRequest;
+import org.example.application.api.CreateEmployeeRequest;
+import org.example.application.api.UpdateEmployeeRequest;
 import org.example.application.dto.PositionDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.exeptions.ResultException;
@@ -66,24 +66,24 @@ public class EmployeesService {
         }
     }
 
-    public Response<?> createNewEmployeeResponse(EmployeeCreateRequest employeeCreateRequest) {
-        if (employeeCreateRequest == null) {
+    public Response<?> createNewEmployeeResponse(CreateEmployeeRequest createEmployeeRequest) {
+        if (createEmployeeRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
-        String firstName = employeeCreateRequest.getFirstName();
-        String lastName = employeeCreateRequest.getLastName();
-        String email = employeeCreateRequest.getEmail();
-        Integer age = employeeCreateRequest.getAge();
+        String firstName = createEmployeeRequest.getFirstName();
+        String lastName = createEmployeeRequest.getLastName();
+        String email = createEmployeeRequest.getEmail();
+        Integer age = createEmployeeRequest.getAge();
         if (firstName == null || lastName == null || email == null || age == null) {
             return Response.<String>builder()
                     .data("Заполнены не все поля.")
                     .success(false)
                     .build();
         }
-        if (!employeesRepository.saveEmployee(employeeCreateRequest)) {
+        if (!employeesRepository.saveEmployee(createEmployeeRequest)) {
             return Response.<String>builder()
                     .data("Ошибка при создании сотрудника.")
                     .success(false)
@@ -95,15 +95,15 @@ public class EmployeesService {
                 .build();
     }
 
-    public Response<?> updateEmployeeResponse(EmployeeUpdateRequest employeeUpdateRequest, int id) {
-        if (employeeUpdateRequest == null) {
+    public Response<?> updateEmployeeResponse(UpdateEmployeeRequest updateEmployeeRequest, int id) {
+        if (updateEmployeeRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
 
-        if (!employeesRepository.updateEmployee(employeeUpdateRequest, id)) {
+        if (!employeesRepository.updateEmployee(updateEmployeeRequest, id)) {
             return Response.<String>builder()
                     .data("Ошибка при обновлении данных сотрудника.")
                     .success(false)

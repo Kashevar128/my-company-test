@@ -1,8 +1,8 @@
 package org.example.application.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.EmployeeCreateRequest;
-import org.example.application.api.EmployeeUpdateRequest;
+import org.example.application.api.CreateEmployeeRequest;
+import org.example.application.api.UpdateEmployeeRequest;
 import org.example.application.api.Response;
 import org.example.application.services.EmployeesService;
 import org.springframework.http.MediaType;
@@ -26,13 +26,13 @@ public class EmployeesController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> createEmployee(@RequestBody EmployeeCreateRequest employeeCreateRequest) {
-        return employeesService.createNewEmployeeResponse(employeeCreateRequest);
+    public Response<?> createEmployee(@RequestBody CreateEmployeeRequest createEmployeeRequest) {
+        return employeesService.createNewEmployeeResponse(createEmployeeRequest);
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> updateEmployee(@RequestBody EmployeeUpdateRequest employeeUpdateRequest, @PathVariable int id) {
-        return employeesService.updateEmployeeResponse(employeeUpdateRequest, id);
+    public Response<?> updateEmployee(@RequestBody UpdateEmployeeRequest updateEmployeeRequest, @PathVariable int id) {
+        return employeesService.updateEmployeeResponse(updateEmployeeRequest, id);
     }
 
     @DeleteMapping(value = "/{id}")

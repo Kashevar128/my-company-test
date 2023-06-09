@@ -1,8 +1,8 @@
 package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.EmployeeCreateRequest;
-import org.example.application.api.EmployeeUpdateRequest;
+import org.example.application.api.CreateEmployeeRequest;
+import org.example.application.api.UpdateEmployeeRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
 import org.example.application.model.Employee;
@@ -10,7 +10,6 @@ import org.example.application.model.Position;
 import org.example.application.model.Project;
 import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
-import org.example.application.services.ProjectService;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -50,15 +49,15 @@ public class EmployeesRepository {
 
     }
 
-    public boolean saveEmployee(EmployeeCreateRequest employeeCreateRequest) {
+    public boolean saveEmployee(CreateEmployeeRequest createEmployeeRequest) {
         EntityManager entityManager = hibernateService.getEntityManager();
         MyCallback<Boolean> createEmployeeCallback = () -> {
             try {
                 Employee employee = new Employee();
-                employee.setFirstName(employeeCreateRequest.getFirstName());
-                employee.setLastName(employeeCreateRequest.getLastName());
-                employee.setEmail(employeeCreateRequest.getEmail());
-                employee.setAge(employeeCreateRequest.getAge());
+                employee.setFirstName(createEmployeeRequest.getFirstName());
+                employee.setLastName(createEmployeeRequest.getLastName());
+                employee.setEmail(createEmployeeRequest.getEmail());
+                employee.setAge(createEmployeeRequest.getAge());
                 entityManager.persist(employee);
                 return true;
             } catch (Exception e) {
@@ -69,20 +68,20 @@ public class EmployeesRepository {
         return hibernateService.executeQuery(createEmployeeCallback);
     }
 
-    public boolean updateEmployee(EmployeeUpdateRequest employeeUpdateRequest, int id) {
+    public boolean updateEmployee(UpdateEmployeeRequest updateEmployeeRequest, int id) {
         try {
-            String firstName = employeeUpdateRequest.getFirstName();
-            String lastname = employeeUpdateRequest.getLastName();
-            String email = employeeUpdateRequest.getEmail();
-            Integer age = employeeUpdateRequest.getAge();
-            Integer positionId = employeeUpdateRequest.getPositionId();
+            String firstName = updateEmployeeRequest.getFirstName();
+            String lastname = updateEmployeeRequest.getLastName();
+            String email = updateEmployeeRequest.getEmail();
+            Integer age = updateEmployeeRequest.getAge();
+            Integer positionId = updateEmployeeRequest.getPositionId();
             Position positionById;
             if (positionId != null) {
                 positionById = positionsRepository.getPositionById(positionId);
             } else {
                 positionById = null;
             }
-            List<Integer> projectsId = employeeUpdateRequest.getProjectsId();
+            List<Integer> projectsId = updateEmployeeRequest.getProjectsId();
             List<Project> projectList = new ArrayList<>();
             if (projectsId != null) {
                 for (Integer i : projectsId) {

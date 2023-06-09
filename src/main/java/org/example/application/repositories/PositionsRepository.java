@@ -2,16 +2,19 @@ package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.CreatePositionRequest;
+import org.example.application.api.UpdatePositionRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
 import org.example.application.model.Employee;
 import org.example.application.model.Position;
+import org.example.application.model.Project;
 import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -59,29 +62,25 @@ public class PositionsRepository {
         return hibernateService.executeQuery(createPositionCallback);
     }
 
-    public boolean updatePosition(CreatePositionRequest createPositionRequest, int id) {
-        String positionNameSQL = "UPDATE positions SET position_name = ? WHERE id = ?";
+    public boolean updatePosition(UpdatePositionRequest updatePositionRequest, int id) {
+        try {
+            String positionName = updatePositionRequest.getPositionName();
 
-        try (Connection connection = connectionService.getConnection()){
-            Consumer<String> positionNameConsumer = (positionName) -> {
-                PreparedStatement statement;
-                try {
-                    statement = connection.prepareStatement(positionNameSQL);
-                    statement.setString(1, positionName);
-                    statement.setInt(2, id);
-                    statement.executeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+            EntityManager entityManager = hibernateService.getEntityManager();
+            MyCallback<Boolean> updateCallable = () -> {
+                Optional<Position> positionOpt = Optional.ofNullable(entityManager.find(Position.class, id));
+                Position position;
+                if (!positionOpt.isPresent()) return false;
+                else position = positionOpt.get();
+
+                Optional.ofNullable(positionName).ifPresent(position ::setPositionName);
+                return true;
             };
-
-            String positionName = createPositionRequest.getPositionName();
-            Optional.ofNullable(positionName).ifPresent(positionNameConsumer);
-        } catch (SQLException e) {
+            return hibernateService.executeQuery(updateCallable);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
     public boolean deletePosition(int id) {

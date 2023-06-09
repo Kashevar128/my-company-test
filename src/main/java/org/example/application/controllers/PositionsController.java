@@ -3,6 +3,7 @@ package org.example.application.controllers;
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.CreatePositionRequest;
 import org.example.application.api.Response;
+import org.example.application.api.UpdatePositionRequest;
 import org.example.application.services.PositionService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,8 @@ public class PositionsController {
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> updatePosition(@RequestBody CreatePositionRequest createPositionRequest, @PathVariable int id) {
-        return positionService.updatePositionResponse(createPositionRequest, id);
+    public Response<?> updatePosition(@RequestBody UpdatePositionRequest updatePositionRequest, @PathVariable int id) {
+        return positionService.updatePositionResponse(updatePositionRequest, id);
     }
 
     @DeleteMapping(value = "/{id}")

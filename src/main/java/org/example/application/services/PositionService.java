@@ -3,6 +3,7 @@ package org.example.application.services;
 import lombok.RequiredArgsConstructor;
 import org.example.application.api.CreatePositionRequest;
 import org.example.application.api.Response;
+import org.example.application.api.UpdatePositionRequest;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.PositionDto;
 import org.example.application.exeptions.ResultException;
@@ -101,15 +102,15 @@ public class PositionService {
                 .build();
     }
 
-    public Response<?> updatePositionResponse(CreatePositionRequest createPositionRequest, int id) {
-        if (createPositionRequest == null) {
+    public Response<?> updatePositionResponse(UpdatePositionRequest updatePositionRequest,  int id) {
+        if (updatePositionRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
 
-        if (!positionsRepository.updatePosition(createPositionRequest, id)) {
+        if (!positionsRepository.updatePosition(updatePositionRequest, id)) {
             return Response.<String>builder()
                     .data("Ошибка при обновлении позиции.")
                     .success(false)
