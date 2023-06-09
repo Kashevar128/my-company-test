@@ -33,11 +33,10 @@ public class PositionService {
     public Response<?> getPositionDtoByIdResponse(int id) throws ResultException {
         try {
             Position position = positionsRepository.getPositionById(id);
-            List<Employee> employeeDtoListByPositionId = employeesRepository.getEmployeeListByPositionId(position.getId());
             List<EmployeeDto> employeeDtoList = new ArrayList<>();
-            for (Employee employee : employeeDtoListByPositionId) {
-            //    EmployeeDto employeeDto = employeesMapper.mapToEmployeeDto(employee);
-            //    employeeDtoList.add(employeeDto);
+            for (Employee employee : position.getEmployeeList()) {
+                EmployeeDto employeeDto = employeesMapper.mapToEmployeeDtoSimple(employee);
+                employeeDtoList.add(employeeDto);
             }
             PositionDto positionDto = positionsMapper.mapToPositionDto(position, employeeDtoList);
             return Response.<PositionDto>builder()
