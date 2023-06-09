@@ -1,7 +1,7 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.PositionRequest;
+import org.example.application.api.CreatePositionRequest;
 import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.PositionDto;
@@ -75,21 +75,21 @@ public class PositionService {
         }
     }
 
-    public Response<?> createNewPositionResponse(PositionRequest positionRequest) {
-        if (positionRequest == null) {
+    public Response<?> createNewPositionResponse(CreatePositionRequest createPositionRequest) {
+        if (createPositionRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
-        String positionName = positionRequest.getPositionName();
+        String positionName = createPositionRequest.getPositionName();
         if (positionName == null) {
             return Response.<String>builder()
                     .data("Название не заполнено.")
                     .success(false)
                     .build();
         }
-        if (!positionsRepository.savePosition(positionRequest)) {
+        if (!positionsRepository.savePosition(createPositionRequest)) {
             return Response.<String>builder()
                     .data("Ошибка при создании позиции.")
                     .success(false)
@@ -101,15 +101,15 @@ public class PositionService {
                 .build();
     }
 
-    public Response<?> updatePositionResponse(PositionRequest positionRequest, int id) {
-        if (positionRequest == null) {
+    public Response<?> updatePositionResponse(CreatePositionRequest createPositionRequest, int id) {
+        if (createPositionRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
 
-        if (!positionsRepository.updatePosition(positionRequest, id)) {
+        if (!positionsRepository.updatePosition(createPositionRequest, id)) {
             return Response.<String>builder()
                     .data("Ошибка при обновлении позиции.")
                     .success(false)

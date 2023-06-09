@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PositionRequest {
+public class CreatePositionRequest {
     private String positionName;
 }

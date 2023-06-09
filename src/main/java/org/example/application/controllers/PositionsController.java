@@ -1,7 +1,7 @@
 package org.example.application.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.PositionRequest;
+import org.example.application.api.CreatePositionRequest;
 import org.example.application.api.Response;
 import org.example.application.services.PositionService;
 import org.springframework.http.MediaType;
@@ -25,13 +25,13 @@ public class PositionsController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> createNewPosition(@RequestBody PositionRequest positionRequest) {
-        return positionService.createNewPositionResponse(positionRequest);
+    public Response<?> createNewPosition(@RequestBody CreatePositionRequest createPositionRequest) {
+        return positionService.createNewPositionResponse(createPositionRequest);
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> updatePosition(@RequestBody PositionRequest positionRequest, @PathVariable int id) {
-        return positionService.updatePositionResponse(positionRequest, id);
+    public Response<?> updatePosition(@RequestBody CreatePositionRequest createPositionRequest, @PathVariable int id) {
+        return positionService.updatePositionResponse(createPositionRequest, id);
     }
 
     @DeleteMapping(value = "/{id}")

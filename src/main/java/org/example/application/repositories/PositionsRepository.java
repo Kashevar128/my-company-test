@@ -1,20 +1,17 @@
 package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.PositionRequest;
+import org.example.application.api.CreatePositionRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
-import org.example.application.mappers.PositionsMapper;
 import org.example.application.model.Employee;
 import org.example.application.model.Position;
 import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
-import org.hibernate.engine.jdbc.LobCreationContext;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -46,19 +43,23 @@ public class PositionsRepository {
         else throw new ResultException("База данных пуста.");
     }
 
-    public boolean savePosition(PositionRequest positionRequest) {
-        String query = "INSERT INTO positions (position_name) VALUES (?)";
-        try (Connection connection = connectionService.getConnection()){
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, positionRequest.getPositionName());
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean savePosition(CreatePositionRequest createPositionRequest) {
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Boolean> createPositionCallback = () -> {
+            try {
+                Position position = new Position();
+                position.setPositionName(createPositionRequest.getPositionName());
+                entityManager.persist(position);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        };
+        return hibernateService.executeQuery(createPositionCallback);
     }
 
-    public boolean updatePosition(PositionRequest positionRequest, int id) {
+    public boolean updatePosition(CreatePositionRequest createPositionRequest, int id) {
         String positionNameSQL = "UPDATE positions SET position_name = ? WHERE id = ?";
 
         try (Connection connection = connectionService.getConnection()){
@@ -74,7 +75,7 @@ public class PositionsRepository {
                 }
             };
 
-            String positionName = positionRequest.getPositionName();
+            String positionName = createPositionRequest.getPositionName();
             Optional.ofNullable(positionName).ifPresent(positionNameConsumer);
         } catch (SQLException e) {
             e.printStackTrace();
