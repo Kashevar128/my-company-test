@@ -112,12 +112,16 @@ public class ProjectRepository {
     }
 
     public boolean deleteProject(int id) {
-        String query = "DELETE FROM projects WHERE id = ?";
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
+        try {
+            EntityManager entityManager = hibernateService.getEntityManager();
+            MyCallback<Boolean> deleteProjectCallback = () -> {
+                Optional<Project> projectOpt = Optional.ofNullable(entityManager.find(Project.class, id));
+                if (!projectOpt.isPresent()) return false;
+                entityManager.remove(projectOpt.get());
+                return true;
+            };
+            return hibernateService.executeQuery(deleteProjectCallback);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
