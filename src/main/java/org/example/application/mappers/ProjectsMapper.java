@@ -1,5 +1,6 @@
 package org.example.application.mappers;
 
+import org.example.application.dto.EmployeeDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.model.Employee;
 import org.example.application.model.Project;
@@ -28,6 +29,14 @@ public class ProjectsMapper {
         return ProjectDto.builder()
                 .id(project.getId())
                 .projectName(project.getProjectName())
+                .build();
+    }
+
+    public ProjectDto mapToProjectDto(Project project, List<EmployeeDto> employeeDtoList) {
+        return ProjectDto.builder()
+                .id(project.getId())
+                .projectName(project.getProjectName())
+                .employeeDtoList(employeeDtoList)
                 .build();
     }
 

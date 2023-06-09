@@ -5,6 +5,7 @@ import org.example.application.api.ProjectRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
 import org.example.application.mappers.ProjectsMapper;
+import org.example.application.model.Position;
 import org.example.application.model.Project;
 import org.example.application.services.ConnectionService;
 import org.example.application.services.HibernateService;
@@ -53,23 +54,15 @@ public class ProjectRepository {
     }
 
     public List<Project> getAllProjects() throws ResultException {
-        String query = "SELECT * FROM projects";
-
-        List<Project> positionList = new ArrayList<>();
-        try (Connection connection = connectionService.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-
-            if (resultSet == null) throw new ResultException("База данных пуста.");
-
-            while (resultSet.next()) {
-                Project project = projectsMapper.mapToProject(resultSet);
-                positionList.add(project);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return positionList;
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Optional<List<Project>>> positionsCallback = () ->
+                Optional
+                        .ofNullable(entityManager
+                                .createQuery("SELECT e FROM Project e", Project.class)
+                                .getResultList());
+        Optional<List<Project>> projects = hibernateService.executeQuery(positionsCallback);
+        if (projects.isPresent()) return projects.get();
+        else throw new ResultException("База данных пуста.");
     }
 
     public Project getProjectById(int id) throws ResultException {
