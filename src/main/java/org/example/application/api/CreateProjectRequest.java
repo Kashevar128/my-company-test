@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectRequest {
+public class CreateProjectRequest {
     private String projectName;
 }

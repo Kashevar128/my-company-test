@@ -1,7 +1,7 @@
 package org.example.application.repositories;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.ProjectRequest;
+import org.example.application.api.CreateProjectRequest;
 import org.example.application.exeptions.ResultException;
 import org.example.application.interfaces.MyCallback;
 import org.example.application.mappers.ProjectsMapper;
@@ -73,19 +73,23 @@ public class ProjectRepository {
         return project.get();
     }
 
-    public boolean savePosition(ProjectRequest projectRequest) {
-        String query = "INSERT INTO projects (project_name) VALUES (?)";
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, projectRequest.getProjectName());
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean saveProject(CreateProjectRequest createProjectRequest) {
+        EntityManager entityManager = hibernateService.getEntityManager();
+        MyCallback<Boolean> createPositionCallback = () -> {
+            try {
+                Project project = new Project();
+                project.setProjectName(createProjectRequest.getProjectName());
+                entityManager.persist(project);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        };
+        return hibernateService.executeQuery(createPositionCallback);
     }
 
-    public boolean updateProject(ProjectRequest projectRequest, int id) {
+    public boolean updateProject(CreateProjectRequest createProjectRequest, int id) {
         String projectNameSQL = "UPDATE projects SET project_name = ? WHERE id = ?";
 
         try (Connection connection = connectionService.getConnection()) {
@@ -101,7 +105,7 @@ public class ProjectRepository {
                 }
             };
 
-            String projectName = projectRequest.getProjectName();
+            String projectName = createProjectRequest.getProjectName();
             Optional.ofNullable(projectName).ifPresent(projectNameConsumer);
         } catch (SQLException e) {
             e.printStackTrace();

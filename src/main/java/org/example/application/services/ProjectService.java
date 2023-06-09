@@ -1,16 +1,14 @@
 package org.example.application.services;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.ProjectRequest;
+import org.example.application.api.CreateProjectRequest;
 import org.example.application.api.Response;
 import org.example.application.dto.EmployeeDto;
-import org.example.application.dto.PositionDto;
 import org.example.application.dto.ProjectDto;
 import org.example.application.exeptions.ResultException;
 import org.example.application.mappers.EmployeesMapper;
 import org.example.application.mappers.ProjectsMapper;
 import org.example.application.model.Employee;
-import org.example.application.model.Position;
 import org.example.application.model.Project;
 import org.example.application.repositories.EmployeesRepository;
 import org.example.application.repositories.ProjectRepository;
@@ -83,21 +81,21 @@ public class ProjectService {
         }
     }
 
-    public Response<?> createNewProjectResponse(ProjectRequest projectRequest) {
-        if (projectRequest == null) {
+    public Response<?> createNewProjectResponse(CreateProjectRequest createProjectRequest) {
+        if (createProjectRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
-        String projectName = projectRequest.getProjectName();
+        String projectName = createProjectRequest.getProjectName();
         if (projectName == null) {
             return Response.<String>builder()
                     .data("Название не заполнено.")
                     .success(false)
                     .build();
         }
-        if (!projectRepository.savePosition(projectRequest)) {
+        if (!projectRepository.saveProject(createProjectRequest)) {
             return Response.<String>builder()
                     .data("Ошибка при создании проекта.")
                     .success(false)
@@ -109,15 +107,15 @@ public class ProjectService {
                 .build();
     }
 
-    public Response<?> updateProjectResponse(ProjectRequest projectRequest, int id) {
-        if (projectRequest == null) {
+    public Response<?> updateProjectResponse(CreateProjectRequest createProjectRequest, int id) {
+        if (createProjectRequest == null) {
             return Response.<String>builder()
                     .data("Нулевой запрос.")
                     .success(false)
                     .build();
         }
 
-        if (!projectRepository.updateProject(projectRequest, id)) {
+        if (!projectRepository.updateProject(createProjectRequest, id)) {
             return Response.<String>builder()
                     .data("Ошибка при обновлении проекта.")
                     .success(false)

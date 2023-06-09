@@ -1,7 +1,7 @@
 package org.example.application.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.example.application.api.ProjectRequest;
+import org.example.application.api.CreateProjectRequest;
 import org.example.application.api.Response;
 import org.example.application.services.ProjectService;
 import org.springframework.http.MediaType;
@@ -25,13 +25,13 @@ public class ProjectController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> createNewProject(@RequestBody ProjectRequest projectRequest) {
-        return projectService.createNewProjectResponse(projectRequest);
+    public Response<?> createNewProject(@RequestBody CreateProjectRequest createProjectRequest) {
+        return projectService.createNewProjectResponse(createProjectRequest);
     }
 
     @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Response<?> updateProject(@RequestBody ProjectRequest projectRequest, @PathVariable int id) {
-        return projectService.updateProjectResponse(projectRequest, id);
+    public Response<?> updateProject(@RequestBody CreateProjectRequest createProjectRequest, @PathVariable int id) {
+        return projectService.updateProjectResponse(createProjectRequest, id);
     }
 
     @DeleteMapping(value = "/{id}")
