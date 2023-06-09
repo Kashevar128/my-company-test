@@ -77,14 +77,14 @@ public class EmployeesRepository {
             Integer age = employeeUpdateRequest.getAge();
             Integer positionId = employeeUpdateRequest.getPositionId();
             Position positionById;
-            if(positionId != null) {
+            if (positionId != null) {
                 positionById = positionsRepository.getPositionById(positionId);
             } else {
                 positionById = null;
             }
             List<Integer> projectsId = employeeUpdateRequest.getProjectsId();
             List<Project> projectList = new ArrayList<>();
-            if(projectsId != null) {
+            if (projectsId != null) {
                 for (Integer i : projectsId) {
                     Project projectById = projectRepository.getProjectById(i);
                     projectList.add(projectById);
@@ -114,12 +114,16 @@ public class EmployeesRepository {
     }
 
     public boolean deleteEmployee(int id) {
-        String query = "DELETE FROM employees WHERE id = ?";
-        try (Connection connection = connectionService.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, id);
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
+        try {
+            EntityManager entityManager = hibernateService.getEntityManager();
+            MyCallback<Boolean> deleteEmployeeCallback = () -> {
+                Optional<Employee> employeeOpt = Optional.ofNullable(entityManager.find(Employee.class, id));
+                if (!employeeOpt.isPresent()) return false;
+                entityManager.remove(employeeOpt.get());
+                return true;
+            };
+            return hibernateService.executeQuery(deleteEmployeeCallback);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
